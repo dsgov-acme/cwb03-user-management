@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!--    Initial change set to create tables -->
+    <include file="Initial-Tables.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="add-role-permission-table" author="gmisail">
+        <createTable tableName="role-permission">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="role_id" type="uuid">
+                <constraints foreignKeyName="fk_perm_role_id"
+                             references="role(id)"
+                             nullable="false"/>
+            </column>
+            <column name="permission_id" type="uuid">
+                <constraints foreignKeyName="fk_perm_permission_id"
+                             references="permission(id)"
+                             nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="rename-role-permission" author="gmisail">
+        <renameTable oldTableName="role-permission" newTableName="role_permission"/>
+    </changeSet>
+    <changeSet id="add-group-active-app_id-to-permission" author="none">
+        <addColumn tableName="permission">
+            <column name="application_id" type="uuid">
+                <constraints foreignKeyName="fk_perm_app_id"
+                             references="application(id)"
+                             nullable="false"/>
+            </column>
+
+            <column name="group" type="varchar(128)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="active" type="bool">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="add-role-name-description" author="gmisail">
+        <addColumn tableName="role">
+            <column type="varchar(255)" name="description">
+                <constraints nullable="true" unique="false" />
+            </column>
+        </addColumn>
+
+        <renameColumn tableName="role" oldColumnName="role_name" newColumnName="name"/>
+    </changeSet>
+    <changeSet id="add-application-role" author="gmisail">
+        <addColumn tableName="permission">
+            <column type="varchar(255)" name="application_role">
+                <constraints unique="true" nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="rename-group-column" author="gmisail">
+        <renameColumn tableName="permission" oldColumnName="group" newColumnName="permission_group"/>
+    </changeSet>
+    <changeSet id="remove-redundant-columns" author="gmisail">
+        <dropColumn tableName="permission" columnName="display_name"/>
+        <dropColumn tableName="role" columnName="display_name"/>
+    </changeSet>
+    <changeSet id="remove-redundant-id-for-link-tables" author="gmisail">
+        <dropColumn tableName="role_permission" columnName="id"/>
+        <dropColumn tableName="user_role" columnName="id"/>
+        <dropColumn tableName="application_permission" columnName="id"/>
+
+        <addPrimaryKey tableName="role_permission" columnNames="permission_id, role_id"/>
+        <addPrimaryKey tableName="user_role" columnNames="user_id, role_id"/>
+        <addPrimaryKey tableName="application_permission" columnNames="application_id, permission_id"/>
+    </changeSet>
+    <changeSet id="add-usertype-and-identityproider-to-user_table" author="jstgelais">
+        <!-- These constraints don't get created in H2 databases used for unit testing -->
+        <sql dbms="postgresql">
+            ALTER TABLE user_table DROP CONSTRAINT IF EXISTS user_table_email_key;
+            ALTER TABLE user_table DROP CONSTRAINT IF EXISTS user_table_external_id_key;
+        </sql>
+        <addColumn tableName="user_table">
+            <column name="identity_provider" type="varchar(1024)">
+                <constraints nullable="false" />
+            </column>
+            <column name="user_type" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addUniqueConstraint tableName="user_table" columnNames="identity_provider,external_id" />
+    </changeSet>
+    <changeSet id="make-user_table-external_id-nonnullable" author="jstgelais">
+        <addNotNullConstraint tableName="user_table" columnName="external_id" />
+    </changeSet>
+    <changeSet id="update-user-preference-table" author="acalderon">
+        <dropTable cascadeConstraints="true" tableName="user_preference"/>
+        <createTable tableName="user_preference">
+            <column name="user_id" type="uuid">
+                <constraints primaryKey="true"
+                             foreignKeyName="fk_user_preference_id"
+                             references="user_table(id)"
+                             nullable="false" />
+            </column>
+            <column name="preferred_language" type="varchar(17)">
+                <constraints nullable="true" unique="false" />
+            </column>
+            <column name="preferred_communication_method" type="varchar(17)">
+                <constraints nullable="true" unique="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="add-new-field-to-user-table" author="acalderon">
+        <dropColumn tableName="user_table" columnName="display_name"/>
+        <addColumn tableName="user_table">
+            <column name="first_name" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="user_table">
+            <column name="middle_name" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="user_table">
+            <column name="last_name" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="user_table">
+            <column name="phone_number" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="update-user-type-values" author="deibys.quintero">
+        <update tableName="user_table">
+            <column name="user_type" value="agency" />
+            <where>user_type = '0'</where>
+        </update>
+        <update tableName="user_table">
+            <column name="user_type" value="public" />
+            <where>user_type = '1'</where>
+        </update>
+    </changeSet>
+    <changeSet id="create-soft-delete-fields" author="acalderon">
+        <sql dbms="postgresql">
+            ALTER TABLE user_table DROP CONSTRAINT IF EXISTS user_table_identity_provider_external_id_key;
+        </sql>
+        <addColumn tableName="user_table" >
+            <column name="deleted" defaultValue="false" type="boolean">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="user_table" >
+            <column name="deleted_on" defaultValue="null" type="timestamp">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addUniqueConstraint tableName="user_table" columnNames="identity_provider,external_id,deleted,deleted_on"/>
+    </changeSet>
+    <changeSet id="create-generated-column-full-name" author="acalderon">
+        <sql dbms="postgresql">
+            ALTER TABLE user_table
+                ADD full_name varchar(255) GENERATED ALWAYS AS (first_name || ' ' || last_name) STORED;
+        </sql>
+        <sql dbms="h2">
+            ALTER TABLE user_table
+                ADD full_name varchar(255) AS (CONCAT(first_name, ' ', last_name));
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
