@@ -9,11 +9,11 @@ env:
   ALLOWED_ORIGINS: "http://localhost:4200, http://localhost:4201, https://api.cwb03.dsgov.demo.nuvalence.io, https://agency.cwb03.dsgov.demo.nuvalence.io, https://public.cwb03.dsgov.demo.nuvalence.io, https://employer.cwb03.dsgov.demo.nuvalence.io"
   CERBOS_URI: "127.0.0.1:3592"
   DB_CONNECTION_URL: "jdbc:postgresql://127.0.0.1:5432/cwb03-prod-user-management-db"
-  DB_USERNAME: "${sm://projects/cwb03-prod/secrets/cwb03-prod-db-user/versions/latest}"
-  DB_PASSWORD: "${sm://projects/cwb03-prod/secrets/cwb03-prod-db-pass/versions/latest}"
-  GCP_PROJECT_ID: "cwb03-prod"
-  SELF_SIGN_PUBLIC_KEY: "${sm://projects/cwb03-prod/secrets/cwb03-self-signed-token-public-key/versions/latest}"
-  SELF_SIGN_PRIVATE_KEY: "${sm://projects/cwb03-prod/secrets/cwb03-self-signed-token-private-key/versions/latest}"
+  DB_USERNAME: "${sm://projects/cwb03-prod-2845/secrets/cwb03-prod-db-user/versions/latest}"
+  DB_PASSWORD: "${sm://projects/cwb03-prod-2845/secrets/cwb03-prod-db-pass/versions/latest}"
+  GCP_PROJECT_ID: "cwb03-prod-2845"
+  SELF_SIGN_PUBLIC_KEY: "${sm://projects/cwb03-prod-2845/secrets/cwb03-self-signed-token-public-key/versions/latest}"
+  SELF_SIGN_PRIVATE_KEY: "${sm://projects/cwb03-prod-2845/secrets/cwb03-self-signed-token-private-key/versions/latest}"
   TOKEN_PRIVATE_KEY_SECRET: "cwb03-self-signed-token-private-key"
   TOKEN_ISSUER: "cwb03"
   TOKEN_PRIVATE_KEY_VERSION: "latest"
@@ -21,6 +21,6 @@ env:
   PUBSUB_EMULATOR_HOST: false # set actual "host:port" to enable or false to disable
   PUBSUB_EMULATOR_ENABLED: false # set to true to enable emulator
   # topics separated by comma
-  PUBSUB_SUBSCRIPTIONS: "projects/cwb03-prod/subscriptions/APPLICATION_ROLE_REPORTING_SUBSCRIPTION"
+  PUBSUB_SUBSCRIPTIONS: "projects/cwb03-prod-2845/subscriptions/APPLICATION_ROLE_REPORTING_SUBSCRIPTION"
   SUBSCRIBER_TOPICS: "APPLICATION_ROLE_REPORTING"
-  PUBLISHER_TOPICS: projects/cwb03-prod/topics/APPLICATION_ROLE_REPORTING
+  PUBLISHER_TOPICS: projects/cwb03-prod-2845/topics/APPLICATION_ROLE_REPORTING
