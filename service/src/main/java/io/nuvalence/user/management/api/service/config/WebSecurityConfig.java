@@ -45,6 +45,9 @@ public class WebSecurityConfig {
     @Value("${spring.cloud.gcp.project-id}")
     private String gcpProjectId;
 
+    @Value("${spring.cloud.gcp.firebase-project-id}")
+    private String firebaseGcpProjectId;
+
     @Value("${management.endpoints.web.cors.allowed-origins}")
     private List<String> allowedOrigins;
 
@@ -98,7 +101,7 @@ public class WebSecurityConfig {
                 .addFilterAfter(new LoggingContextFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(
                         new TokenFilter(
-                                new FirebaseAuthenticationProvider(gcpProjectId, NAMESPACE),
+                                new FirebaseAuthenticationProvider(firebaseGcpProjectId, NAMESPACE),
                                 new SelfSignedTokenAuthenticationProvider(
                                         selfSignIssuer,
                                         RsaKeyUtility.getPublicKeyFromString(selfSignPublicKey),
