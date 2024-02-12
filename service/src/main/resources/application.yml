@@ -32,6 +32,7 @@ spring:
   cloud:
     gcp:
       project-id: ${GCP_PROJECT_ID}
+      firebase-project-id: ${FIREBASE_GCP_PROJECT_ID}
       pubsub: # if the emulator host is set to false it will use the real pubsub service
         emulator-host: ${PUBSUB_EMULATOR_HOST:false}
         emulator-enabled: ${PUBSUB_EMULATOR_ENABLED:false}

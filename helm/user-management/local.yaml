@@ -1,4 +1,5 @@
 environment: "local"
+createIngress: true
 
 postgres:
   enabled: false
@@ -19,6 +20,7 @@ env:
   DB_CONNECTION_URL: "jdbc:postgresql://user-management-postgres:5432/local-user-management-db"
   DB_USERNAME: "root"
   DB_PASSWORD: "root"
+  FIREBASE_GCP_PROJECT_ID: "dsgov-dev"
   GCP_PROJECT_ID: "cwb03-dev-a1fe"
   CERBOS_URI: "127.0.0.1:3592"
   SELF_SIGN_PUBLIC_KEY: "${sm://projects/cwb03-dev-a1fe/secrets/cwb03-self-signed-token-public-key/versions/latest}"
