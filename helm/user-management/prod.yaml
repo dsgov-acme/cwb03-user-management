@@ -11,7 +11,7 @@ env:
   DB_CONNECTION_URL: "jdbc:postgresql://127.0.0.1:5432/cwb03-prod-user-management-db"
   DB_USERNAME: "${sm://projects/cwb03-prod-2845/secrets/cwb03-prod-db-user/versions/latest}"
   DB_PASSWORD: "${sm://projects/cwb03-prod-2845/secrets/cwb03-prod-db-pass/versions/latest}"
-  FIREBASE_GCP_PROJECT_ID: "cwb03-prod"
+  FIREBASE_GCP_PROJECT_ID: "cwb03-prod-2845"
   GCP_PROJECT_ID: "cwb03-prod-2845"
   SELF_SIGN_PUBLIC_KEY: "${sm://projects/cwb03-prod-2845/secrets/cwb03-self-signed-token-public-key/versions/latest}"
   SELF_SIGN_PRIVATE_KEY: "${sm://projects/cwb03-prod-2845/secrets/cwb03-self-signed-token-private-key/versions/latest}"
